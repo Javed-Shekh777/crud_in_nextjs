@@ -5,19 +5,21 @@ import { HiPencilAlt } from "react-icons/hi";
 
 const getTopics = async () => {
   try {
-    const res = await fetch("http://localhost:3000/api/topics", {
-      cache: "no-store",
+    const res = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/api/topics`, {
+      next: { revalidate: 10 },  
     });
 
     if (!res.ok) {
-      throw new Error("failed to fetch topics");
+      throw new Error("Failed to fetch topics");
     }
 
     return res.json();
   } catch (error) {
-    console.log("Error during loadin topics ", error);
+    console.log("Error during loading topics ", error);
+    return { topics: [] }; // ✅ Default value return करो
   }
 };
+
 
 const TopicsList = async () => {
   const { topics } = await getTopics();
