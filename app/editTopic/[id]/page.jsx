@@ -7,21 +7,27 @@ const getTopicByID = async (id) => {
     });
 
     if (!res.ok) {
-      throw new Error("Error loading topic : ");
+      throw new Error("Error loading topic");
     }
 
-    return res.json();
+    return await res.json();
   } catch (error) {
-    console.log(`Error loading Topic ${error}`);
+    console.log(`Error loading Topic: ${error}`);
+    return { topic: { title: "", description: "" } }; // Default empty object
   }
 };
 
 const EditTopic = async ({ params }) => {
-  const { id } = await params;
-  const { topic } = await getTopicByID(id);
-  const {title,description}= topic;
+  const { id } = params;
+  const data = await getTopicByID(id);
 
-  return <EditTopicForm title={title} description={description}  id={id} />;
+  if (!data || !data.topic) {
+    return <div>Error: Topic not found</div>;
+  }
+
+  const { title, description } = data.topic;
+
+  return <EditTopicForm title={title} description={description} id={id} />;
 };
 
 export default EditTopic;
